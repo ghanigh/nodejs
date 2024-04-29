@@ -1,16 +1,13 @@
-import express from 'express'
+import express from 'express';
+import routerUser from './router.user.js'
+
 
 const app = express()
 
-// PORT
-const PORT = PORT = 8080
+const port = 8080
+app.use(express.json())
 
-// MIDDLEWARE
-
-// MIDDLEWARE TO ROUTE
-
-// LISTEN
-
-app.listen(PORT, () => {
-    console.log('Listening at http://localhost:${PORT}');
+app.use("/api/user", routerUser)
+app.listen(port, () => {
+    console.log(`Server running on port ${port}`)
 })
