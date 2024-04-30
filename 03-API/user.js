@@ -1,37 +1,72 @@
-import express from 'express';
+import express from 'express'
+import bcrypt from 'bcrypt'
 import ModelUser from "./user.model.js"
-import { Model } from 'mongoose';
 
-const router = express.Router();
+const router = express.Router()
 
-// ROUTE GET
-router.get("/all", async (req, res) =>{
-  const users = await ModelUser.find()
-  res.status(200).json(users)
+router.get("/all", async (req, res) => {
+  try{
+    const users = await ModelUser.find()
+    res.status(200).json(users)
+  }catch(error){
+    console.log(error);
+  }
 })
 
-// AJOUTER UN NOUVEL UTILISATEUR
-router.post("/add", async (req, res) =>{
-const newUser = await ModelUser.create(req.body);
-res.status(201).json(newUser)
-
+router.get("/get/:id", async (req, res ) => {
+  try{
+    const id = req.params.id;
+    const user = await ModelUser.findById(id);
+    res.status(200).json(user)
+  }catch(error){
+    console.log(error);
+  }
 })
 
-// Update ID
-router.put("/update/:id", (req, res) =>{
-  const { id } = req.params
-  Model.findByIdAndUpdate(id, { name: 'Mike' }, options)
-    .then(() => res.status(200).json("User updated"))
-    .catch(err => res.status(500).json(err))
+router.post("/add", async (req, res) => {
+  try{
+    const hadedPassword = await bcrypt.hash(req.body.password, 10)
+
+    const user = await ModelUser.create({
+      ...req.body,
+      password: hadedPassword
+    })
+
+    res.status(201).json({
+      message: "user has been created !", 
+      user
+    })
+  }catch(error){
+    console.log(error);
+  }
 })
 
-// SUPPRIMER UTILISATEUR
-router.delete('/delete:id' , (req, res) => {
-  const { id } = req.params
-
-  ModelUser.findByIdAndDelete(id)
-    .then(() => res.status(200).json("User deleted"))
-    .catch(err => res.status(500).json(err))
+router.put("/update/:id", async (req, res) => {
+  try{
+    const updateUser = await ModelUser.findByIdAndUpdate(
+      req.params.id, 
+      req.body,
+      { new: true }
+    )
+    if(!updateUser) return res.status(404).json("User not found !")
+    
+    res.status(200).json({
+      message: "user updated",
+      updateUser
+    })
+  }catch(error){
+    console.log(error);
+  }
 })
 
-export default router;
+router.delete('/delete/:id' ,async (req, res) => {
+  try{
+    const userDeleted = await ModelUser.findByIdAndDelete(req.params.id)
+    if (!userDeleted) return res.status(404).json("User not found !") 
+    res.status(200).json({message: "User deleted"})
+  }catch(error){
+    console.log(error);
+  }
+})
+
+export default router
