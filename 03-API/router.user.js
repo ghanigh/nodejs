@@ -20,21 +20,21 @@ const data = [
     },
   ];
 
-router.get("/get", (req, res) =>{
+router.get("/all", (req, res) =>{
 
     res.status(200).json(data)
 
 })
 
-router.post("/post", (req, res) =>{
-    console.log(req.body)
-    const newUser = req.body
+router.post("/add", (req, res) =>{
+  console.log(req.body)
+  const newUser = req.body
 
-    res.status(201).json(data.push(newUser))
+  res.status(201).json(data.push(newUser))
 
 })
 
-router.put("/put/:id", (req, res) =>{
+router.put("/update/:id", (req, res) =>{
     const id = req.params.id
     console.log(id)
     for (let i = 0; i < data.length; i++) {
