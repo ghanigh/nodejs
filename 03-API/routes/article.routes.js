@@ -1,6 +1,7 @@
 import express from 'express';
 import bcrypt from 'bcrypt';
-import { Article } from './article.routes.js';
+import Article from '../models/article.model.js';
+
 
 const router = express.Router();
 
