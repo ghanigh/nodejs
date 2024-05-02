@@ -1,41 +1,48 @@
+import express from 'express';
+import bcrypt from 'bcrypt';
 import { Article } from './article.model.js';
 
-        // créer un nouvel article
-export const createArticle = async (req, res, next) => {
-    try {
-        const { title, content, authorId } = req.body; 
-        const article = await Article.create({ title, content, authorId });
-        res.status(201).json({ message: "Article created successfully", article });
-    } catch (error) {
-        next(error);
-    }
-};
+const router = express.Router();
 
-            // obtenir tous les articles
-export const getAllArticles = async (req, res, next) => {
+        // créer un nouvel article
+router.post("/add", async (req, res) => {
+    try {
+        const { title, content, authorId } = req.body;
+        const article = await Article.create({ title, content, authorId });
+        res.status(201).json({ message: "Article crée avec succès", article });
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({ message: "Erreur du serveur" });
+    }
+});
+
+        // obtenir tous les articles
+router.get("/all", async (req, res) => {
     try {
         const articles = await Article.find();
         res.status(200).json(articles);
     } catch (error) {
-        next(error);
+        console.log(error);
+        res.status(500).json({ message: "Erreur du serveur" });
     }
-};
+});
 
         // obtenir un article par son ID
-export const getArticleById = async (req, res, next) => {
+router.get("/get/:id", async (req, res) => {
     try {
         const article = await Article.findById(req.params.id);
         if (!article) {
-            return res.status(404).json({ message: "Article introuvable" });
+            return res.status(404).json({ message: "Article not found" });
         }
         res.status(200).json(article);
     } catch (error) {
-        next(error);
+        console.log(error);
+        res.status(500).json({ message: "Erreur du serveur" });
     }
-};
+});
 
         // mettre à jour un article
-export const updateArticle = async (req, res, next) => {
+router.put("/update/:id", async (req, res) => {
     try {
         const { title, content } = req.body;
         const article = await Article.findByIdAndUpdate(req.params.id, { title, content }, { new: true });
@@ -44,19 +51,23 @@ export const updateArticle = async (req, res, next) => {
         }
         res.status(200).json({ message: "Article mise à jour avec succès", article });
     } catch (error) {
-        next(error);
+        console.log(error);
+        res.status(500).json({ message: "Erreur du serveur" });
     }
-};
+});
 
         // supprimer un article
-export const deleteArticle = async (req, res, next) => {
+router.delete("/delete/:id", async (req, res) => {
     try {
         const article = await Article.findByIdAndDelete(req.params.id);
         if (!article) {
-            return res.status(404).json({ message: "Article not found" });
+            return res.status(404).json({ message: "Article introuvable" });
         }
         res.status(200).json({ message: "Article supprimer avec succès" });
     } catch (error) {
-        next(error);
+        console.log(error);
+        res.status(500).json({ message: "Erreur du serveur" });
     }
-};
+});
+
+export default router;

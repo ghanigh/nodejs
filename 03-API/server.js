@@ -16,6 +16,7 @@ app.use(express.json())
 
 app.use("/api/user", routerUser)
 app.use("/api/mongo/user", userModel)
+app.use("/api/article", routerUser)
 
 app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`)
