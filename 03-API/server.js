@@ -2,7 +2,9 @@ import express from 'express';
 import routerUser from './router.user.js'
 import userModel from './user.js'
 import mongoose from 'mongoose' ;
-import { env } from './config.js'
+import { env } from './config.js';
+import cookieParser from "cookie-parser";
+import cors from "cors";
 
 mongoose.connect(env.mongoURI, {dbName:'Utilisateur'})
         .then(() => console.log('Connected to MongoDB'))
